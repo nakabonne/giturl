@@ -1,9 +1,11 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"os"
+	"runtime"
 
 	flag "github.com/spf13/pflag"
 )
@@ -15,6 +17,11 @@ var (
 		fmt.Fprintln(os.Stderr, "usage: giturl [<flag> ...] <Git URL> ")
 		flagSet.PrintDefaults()
 	}
+
+	// Automatically populated by goreleaser during build
+	version = "unversioned"
+	commit  = "?"
+	date    = "?"
 )
 
 type app struct {
@@ -22,7 +29,7 @@ type app struct {
 	user    string
 	noUser  bool
 	scpLike bool
-	verbose bool
+	version bool
 	stdout  io.Writer
 	stderr  io.Writer
 }
@@ -36,10 +43,11 @@ func main() {
 	flagSet.StringVarP(&a.scheme, "user", "u", "", "set user")
 	flagSet.BoolVar(&a.noUser, "no-user", false, "prune user from the given URL")
 	flagSet.BoolVar(&a.scpLike, "scp-like", false, "emit scp-like syntax (available only when --schema=ssh)")
+	flagSet.BoolVarP(&a.version, "version", "v", false, "print the current version")
 	flagSet.Usage = usage
 
 	if err := flagSet.Parse(os.Args[1:]); err != nil {
-		if err != flag.ErrHelp {
+		if !errors.Is(err, flag.ErrHelp) {
 			fmt.Fprintln(a.stderr, err)
 		}
 		return
@@ -49,5 +57,9 @@ func main() {
 }
 
 func (a *app) run(args []string) int {
+	if a.version {
+		fmt.Fprintf(a.stderr, "version=%s, commit=%s, buildDate=%s, os=%s, arch=%s\n", version, commit, date, runtime.GOOS, runtime.GOARCH)
+		return 0
+	}
 	return 0
 }
