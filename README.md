@@ -1,29 +1,43 @@
 # giturl
-A tiny parser for [Git URLs](https://git-scm.com/docs/git-clone#_git_urls).
+A converter for Git URLs.
 
-In addition to ssh, git, http, and https protocols, it also supports SCP-like URLs.
+## Installation
 
-```go
-package main
-
-import (
-	"fmt"
-
-	"github.com/nakabonne/giturl"
-)
-
-func main() {
-	u := giturl.Parse("git@github.com:org/repo.git")
-	fmt.Printf("%#v", u)
-	/*
-		&url.URL{
-			Scheme: "ssh",
-			User: &url.Userinfo{
-				username:    "git",
-			},
-			Host:       "github.com",
-			Path:       "/org/repo.git",
-		}
-	*/
-}
+With Go
 ```
+go get github.com/nakabonne/giturl/cmd/giturl
+```
+
+## Usage
+
+```bash
+$ giturl -h
+usage: giturl [<flag> ...] <Git URL>
+      --no-user         prune user from the given URL
+  -s, --scheme string   convert to the given schema: ssh|http|https|git|file (default "ssh")
+      --scp-like        emit scp-like syntax (available only when --schema=ssh)
+  -u, --user string     set user
+```
+
+## Example
+
+```bash
+$ giturl --scheme=ssh https://github.com/org/repo.git
+ssh://github.com/org/repo.git
+
+$ giturl --scheme=ssh --scp-like --user=git https://github.com/org/repo.git
+git@github.com:org/repo.git
+
+$ giturl --scheme=https --no-user git@github.com:org/repo.git
+https://github.com/org/repo.git
+
+$ giturl --scheme=git https://github.com/org/repo.git
+git://github.com/org/repo.git
+```
+
+## Supported protocols
+- ssh
+- git
+- http
+- https
+- file
