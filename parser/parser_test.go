@@ -1,4 +1,4 @@
-package giturl
+package parser
 
 import (
 	"net/url"

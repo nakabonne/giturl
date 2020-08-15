@@ -1,6 +1,11 @@
 package converter
 
-import "github.com/nakabonne/giturl/parser"
+import (
+	"fmt"
+	"net/url"
+
+	"github.com/nakabonne/giturl/parser"
+)
 
 type Scheme string
 
@@ -24,6 +29,37 @@ type Options struct {
 
 // Convert will attempt to convert to the given scheme.
 // Returns an error if the conversion isn't possible.
-func Convert(rawURL string, scheme Scheme) string {
-	parser.Parse(rawURL)
+func Convert(rawURL string, scheme Scheme, opts Options) (string, error) {
+	u := parser.Parse(rawURL)
+	if opts.User != "" {
+		u.User = url.User(opts.User)
+	}
+	var res string
+	switch scheme {
+	case SchemeSSH:
+		if opts.ScpLike {
+			res = fmt.Sprintf("%s:%s", u.Host, u.Path)
+			if u.User != nil {
+				res = fmt.Sprintf("%s@%s:%s", u.User, u.Host, u.Path)
+			}
+			break
+		}
+		res = fmt.Sprintf("ssh://%s@%s/%s", u.User, u.Host, u.Path)
+		if u.User != nil {
+			res = fmt.Sprintf("ssh://%s/%s", u.Host, u.Path)
+		}
+	case SchemeHTTP:
+		res = fmt.Sprintf("http://%s/%s", u.Host, u.Path)
+		if u.User != nil {
+			res = fmt.Sprintf("http://%s@%s/%s", u.User, u.Host, u.Path)
+		}
+	case SchemeHTTPS:
+		res = fmt.Sprintf("https://%s/%s", u.Host, u.Path)
+		if u.User != nil {
+			res = fmt.Sprintf("https://%s@%s/%s", u.User, u.Host, u.Path)
+		}
+	default:
+		return "", fmt.Errorf("unsupported scheme %q", scheme)
+	}
+	return res, nil
 }

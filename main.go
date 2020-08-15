@@ -8,6 +8,8 @@ import (
 	"runtime"
 
 	flag "github.com/spf13/pflag"
+
+	"github.com/nakabonne/giturl/converter"
 )
 
 var (
@@ -36,13 +38,14 @@ type app struct {
 
 func main() {
 	a := &app{
+		scheme: "ssh",
 		stdout: os.Stdout,
 		stderr: os.Stderr,
 	}
-	flagSet.StringVarP(&a.scheme, "scheme", "s", "ssh", "convert to the given schema: ssh|http|https|git|file")
-	flagSet.StringVarP(&a.scheme, "user", "u", "", "set user")
-	flagSet.BoolVar(&a.noUser, "no-user", false, "prune user from the given URL")
-	flagSet.BoolVar(&a.scpLike, "scp-like", false, "emit scp-like syntax (available only when --schema=ssh)")
+	flagSet.StringVarP(&a.scheme, "scheme", "s", a.scheme, "convert to the given schema: ssh|http|https|git|file")
+	flagSet.StringVarP(&a.user, "user", "u", "", "set user")
+	flagSet.BoolVarP(&a.noUser, "no-user", "n", false, "prune user from the given URL")
+	flagSet.BoolVarP(&a.scpLike, "scp-like", "S", false, "emit scp-like syntax (available only when --schema=ssh)")
 	flagSet.BoolVarP(&a.version, "version", "v", false, "print the current version")
 	flagSet.Usage = usage
 
@@ -61,5 +64,26 @@ func (a *app) run(args []string) int {
 		fmt.Fprintf(a.stderr, "version=%s, commit=%s, buildDate=%s, os=%s, arch=%s\n", version, commit, date, runtime.GOOS, runtime.GOARCH)
 		return 0
 	}
+
+	if len(args) == 0 {
+		fmt.Fprintln(a.stderr, "No URL given")
+		usage()
+		return 1
+	}
+	if a.scheme == "" {
+		a.scheme = "ssh"
+	}
+	opts := converter.Options{
+		User:      a.user,
+		PruneUser: a.noUser,
+		ScpLike:   a.scpLike,
+	}
+	res, err := converter.Convert(args[0], converter.Scheme(a.scheme), opts)
+	if err != nil {
+		fmt.Fprintln(a.stderr, err)
+		usage()
+		return 1
+	}
+	fmt.Fprintf(a.stdout, "%s\n", res)
 	return 0
 }
