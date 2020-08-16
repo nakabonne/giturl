@@ -1,29 +1,29 @@
 # giturl
-A tiny parser for [Git URLs](https://git-scm.com/docs/git-clone#_git_urls).
+`giturl` lets you convert a Git URL into the scheme you like.
 
-In addition to ssh, git, http, and https protocols, it also supports SCP-like URLs.
+## Installation
 
-```go
-package main
-
-import (
-	"fmt"
-
-	"github.com/nakabonne/giturl"
-)
-
-func main() {
-	u := giturl.Parse("git@github.com:org/repo.git")
-	fmt.Printf("%#v", u)
-	/*
-		&url.URL{
-			Scheme: "ssh",
-			User: &url.Userinfo{
-				username:    "git",
-			},
-			Host:       "github.com",
-			Path:       "/org/repo.git",
-		}
-	*/
-}
+With Go
 ```
+go get github.com/nakabonne/giturl
+```
+
+## Usage
+
+```bash
+$ giturl -h
+```
+
+## Examples
+
+```bash
+$ giturl https git@github.com:org/repo.git
+https://github.com/org/repo.git
+
+$ giturl ssh https://github.com/org/repo.git
+ssh://github.com/org/repo.git
+
+$ giturl ssh --scp-like --user=git https://github.com/org/repo.git
+git@github.com:org/repo.git
+```
+
