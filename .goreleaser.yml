@@ -1,0 +1,60 @@
+before:
+  hooks:
+    - go mod tidy
+builds:
+- main: .
+  binary: giturl
+  goos:
+    - freebsd
+    - darwin
+    - linux
+    - windows
+  goarch:
+    - amd64
+    - arm
+    - arm64
+    - 386
+    - ppc64le
+    - s390x
+    - mips64
+    - mips64le
+  goarm:
+    - 6
+    - 7
+  env:
+    - CGO_ENABLED=0
+  ldflags: -s -w -X github.com/nakabonne/giturl/pkg/commands.version={{.Version}} -X github.com/nakabonne/giturl/pkg/.commit={{.ShortCommit}} -X github.com/nakabonne/giturl/pkg/.date={{.Date}}
+
+archives:
+- replacements:
+    darwin: Darwin
+    linux: Linux
+    386: 32-bit
+    amd64: x86_64
+
+checksum:
+  name_template: 'checksums.txt'
+
+snapshot:
+  name_template: "{{ .Tag }}-next"
+
+changelog:
+  filters:
+    exclude:
+    - '^test:'
+
+brews:
+  - github:
+      owner: nakabonne
+      name: homebrew-giturl
+    homepage: 'https://github.com/nakabonne/giturl'
+    description: 'A converter for Git URLs.'
+
+dockers:
+  - dockerfile: Dockerfile
+    binaries:
+      - giturl
+    image_templates:
+      - "nakabonne/giturl:latest"
+      - "nakabonne/giturl:{{ .Tag }}"
+      - "nakabonne/giturl:v{{ .Major }}.{{ .Minor }}"
