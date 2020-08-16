@@ -39,7 +39,7 @@ func (a *app) run() error {
 }
 
 func main() {
-	a := newApp("giturl", "A converter for Git URLs")
+	a := newApp("giturl", "Converts Git URLs into the scheme you like.")
 	a.addCommands(
 		commands.NewVersionCommand(a.stdout),
 		commands.NewSSHCommand(a.stdout),
