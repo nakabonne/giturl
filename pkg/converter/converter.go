@@ -5,7 +5,7 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/nakabonne/giturl/parser"
+	"github.com/nakabonne/giturl/pkg/parser"
 )
 
 type Scheme string

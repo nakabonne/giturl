@@ -9,7 +9,7 @@ import (
 
 	flag "github.com/spf13/pflag"
 
-	"github.com/nakabonne/giturl/converter"
+	"github.com/nakabonne/giturl/pkg/converter"
 )
 
 var (
