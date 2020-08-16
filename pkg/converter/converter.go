@@ -20,7 +20,6 @@ const (
 
 // Options provides an ability to customize the output URLs in detail.
 type Options struct {
-	// TODO: Make value instead of pointer
 	// Override the user if non-empty string set.
 	// Prune user from the given URL if empty string set.
 	User *string
@@ -31,19 +30,17 @@ type Options struct {
 // Convert will attempt to convert to the given scheme.
 func Convert(rawURL string, scheme Scheme, opts *Options) (string, error) {
 	u := parser.Parse(rawURL)
-	if opts != nil {
-		if opts.User != nil {
-			if *opts.User == "" {
-				u.User = nil
-			} else {
-				u.User = url.User(*opts.User)
-			}
+	if opts != nil && opts.User != nil {
+		if *opts.User == "" {
+			u.User = nil
+		} else {
+			u.User = url.User(*opts.User)
 		}
 	}
 
 	switch scheme {
 	case SchemeSSH:
-		if opts.ScpLike {
+		if opts != nil && opts.ScpLike {
 			u.Path = strings.TrimLeft(u.Path, "/")
 			res := fmt.Sprintf("%s:%s", u.Host, u.Path)
 			if u.User != nil {

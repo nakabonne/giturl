@@ -14,19 +14,19 @@ type sshOptions struct {
 }
 
 func NewSSHCommand(stdout io.Writer) *cobra.Command {
-	s := &sshOptions{}
+	o := &sshOptions{}
 	cmd := &cobra.Command{
 		Use:     "ssh",
-		Short:   "Convert into sshOptions syntax",
+		Short:   "Convert into ssh syntax",
 		Example: "giturl ssh --scp-like --user=git https://github.com/org/repo.git",
 	}
-	cmd.Flags().BoolVarP(&s.scpLike, "scp-like", "s", s.scpLike, "emit scp-like syntax")
-	cmd.Flags().StringVar(&s.user, "user", s.user, "override the user")
+	cmd.Flags().BoolVarP(&o.scpLike, "scp-like", "s", o.scpLike, "emit scp-like syntax")
+	cmd.Flags().StringVar(&o.user, "user", o.user, "override the user")
 
 	r := &runner{
 		stdout:      stdout,
 		scheme:      converter.SchemeSSH,
-		makeOptions: s.makeOptions,
+		makeOptions: o.makeOptions,
 	}
 	cmd.RunE = r.run
 

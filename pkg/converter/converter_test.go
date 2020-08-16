@@ -7,7 +7,7 @@ func TestConvert(t *testing.T) {
 		name    string
 		rawURL  string
 		scheme  Scheme
-		opts    Options
+		opts    *Options
 		want    string
 		wantErr bool
 	}{
@@ -30,7 +30,7 @@ func TestConvert(t *testing.T) {
 			name:   "convert https into ssh with specified user",
 			rawURL: "https://host.xz/path/to/repo.git",
 			scheme: "ssh",
-			opts: Options{
+			opts: &Options{
 				User: takePointer("user"),
 			},
 			want:    "ssh://user@host.xz/path/to/repo.git",
@@ -40,7 +40,7 @@ func TestConvert(t *testing.T) {
 			name:   "convert https into SCP-like URL",
 			rawURL: "https://host.xz/path/to/repo.git",
 			scheme: "ssh",
-			opts: Options{
+			opts: &Options{
 				ScpLike: true,
 			},
 			want:    "host.xz:path/to/repo.git",
@@ -50,7 +50,7 @@ func TestConvert(t *testing.T) {
 			name:   "convert https into SCP-like URL with specified user",
 			rawURL: "https://host.xz/path/to/repo.git",
 			scheme: "ssh",
-			opts: Options{
+			opts: &Options{
 				ScpLike: true,
 				User:    takePointer("user"),
 			},
@@ -98,7 +98,7 @@ func TestConvert(t *testing.T) {
 			name:   "convert SCP-like URL into https while pruning user",
 			rawURL: "user@host.xz:path/to/repo.git",
 			scheme: "https",
-			opts: Options{
+			opts: &Options{
 				User: takePointer(""),
 			},
 			want:    "https://host.xz/path/to/repo.git",
@@ -145,7 +145,7 @@ func TestConvert(t *testing.T) {
 			name:   "convert ssh into https while pruning user",
 			rawURL: "ssh://user@host.xz/path/to/repo.git",
 			scheme: "https",
-			opts: Options{
+			opts: &Options{
 				User: takePointer(""),
 			},
 			want:    "https://host.xz/path/to/repo.git",
@@ -192,7 +192,7 @@ func TestConvert(t *testing.T) {
 			name:   "convert http into ssh with specified user",
 			rawURL: "http://host.xz/path/to/repo.git",
 			scheme: "ssh",
-			opts: Options{
+			opts: &Options{
 				User: takePointer("user"),
 			},
 			want:    "ssh://user@host.xz/path/to/repo.git",
@@ -202,7 +202,7 @@ func TestConvert(t *testing.T) {
 			name:   "convert http into SCP-like URL",
 			rawURL: "http://host.xz/path/to/repo.git",
 			scheme: "ssh",
-			opts: Options{
+			opts: &Options{
 				ScpLike: true,
 			},
 			want:    "host.xz:path/to/repo.git",
@@ -212,7 +212,7 @@ func TestConvert(t *testing.T) {
 			name:   "convert http into SCP-like URL with specified user",
 			rawURL: "http://host.xz/path/to/repo.git",
 			scheme: "ssh",
-			opts: Options{
+			opts: &Options{
 				ScpLike: true,
 				User:    takePointer("user"),
 			},
@@ -244,43 +244,36 @@ func TestConvert(t *testing.T) {
 		// The cases for converting git.
 		{
 			name:    "convert git into ssh",
-			rawURL:  "http://host.xz/path/to/repo.git",
+			rawURL:  "git://host.xz/path/to/repo.git",
 			scheme:  "ssh",
 			want:    "ssh://host.xz/path/to/repo.git",
 			wantErr: false,
 		},
 		{
-			name:    "convert http with user into ssh",
-			rawURL:  "http://user@host.xz/path/to/repo.git",
-			scheme:  "ssh",
-			want:    "ssh://user@host.xz/path/to/repo.git",
-			wantErr: false,
-		},
-		{
-			name:   "convert http into ssh with specified user",
-			rawURL: "http://host.xz/path/to/repo.git",
+			name:   "convert git into ssh with specified user",
+			rawURL: "git://host.xz/path/to/repo.git",
 			scheme: "ssh",
-			opts: Options{
+			opts: &Options{
 				User: takePointer("user"),
 			},
 			want:    "ssh://user@host.xz/path/to/repo.git",
 			wantErr: false,
 		},
 		{
-			name:   "convert http into SCP-like URL",
-			rawURL: "http://host.xz/path/to/repo.git",
+			name:   "convert git into SCP-like URL",
+			rawURL: "git://host.xz/path/to/repo.git",
 			scheme: "ssh",
-			opts: Options{
+			opts: &Options{
 				ScpLike: true,
 			},
 			want:    "host.xz:path/to/repo.git",
 			wantErr: false,
 		},
 		{
-			name:   "convert http into SCP-like URL with specified user",
-			rawURL: "http://host.xz/path/to/repo.git",
+			name:   "convert git into SCP-like URL with specified user",
+			rawURL: "git://host.xz/path/to/repo.git",
 			scheme: "ssh",
-			opts: Options{
+			opts: &Options{
 				ScpLike: true,
 				User:    takePointer("user"),
 			},
@@ -288,22 +281,22 @@ func TestConvert(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "convert https into https",
-			rawURL:  "http://host.xz/path/to/repo.git",
+			name:    "convert git into https",
+			rawURL:  "git://host.xz/path/to/repo.git",
 			scheme:  "https",
 			want:    "https://host.xz/path/to/repo.git",
 			wantErr: false,
 		},
 		{
-			name:    "convert http into git",
-			rawURL:  "http://host.xz/path/to/repo.git",
-			scheme:  "git",
-			want:    "git://host.xz/path/to/repo.git",
+			name:    "convert git into http",
+			rawURL:  "git://host.xz/path/to/repo.git",
+			scheme:  "http",
+			want:    "http://host.xz/path/to/repo.git",
 			wantErr: false,
 		},
 		{
-			name:    "convert http into file",
-			rawURL:  "http://host.xz/path/to/repo.git",
+			name:    "convert git into file",
+			rawURL:  "git://host.xz/path/to/repo.git",
 			scheme:  "file",
 			want:    "file:///path/to/repo.git",
 			wantErr: false,

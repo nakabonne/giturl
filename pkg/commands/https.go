@@ -9,16 +9,20 @@ import (
 )
 
 func NewHTTPSCommand(stdout io.Writer) *cobra.Command {
-	r := &runner{
-		stdout: stdout,
-		scheme: converter.SchemeHTTPS,
-	}
+	o := &notSSHOptions{}
 	cmd := &cobra.Command{
 		Use:     "https",
 		Short:   "Convert into https syntax",
-		Example: "giturl https git@github.com:org/repo.git",
-		RunE:    r.run,
+		Example: "giturl https --no-user git@github.com:org/repo.git",
 	}
+	cmd.Flags().BoolVarP(&o.noUser, "no-user", "n", o.noUser, "prune user from the given URL")
+
+	r := &runner{
+		stdout:      stdout,
+		scheme:      converter.SchemeHTTPS,
+		makeOptions: o.makeOptions,
+	}
+	cmd.RunE = r.run
 
 	return cmd
 }

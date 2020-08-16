@@ -9,15 +9,20 @@ import (
 )
 
 func NewHTTPCommand(stdout io.Writer) *cobra.Command {
-	r := &runner{
-		stdout: stdout,
-		scheme: converter.SchemeHTTP,
-	}
+	o := &notSSHOptions{}
 	cmd := &cobra.Command{
-		Use:   "http",
-		Short: "Convert into http syntax",
-		RunE:  r.run,
+		Use:     "http",
+		Short:   "Convert into http syntax",
+		Example: "giturl http --no-user git@github.com:org/repo.git",
 	}
+	cmd.Flags().BoolVarP(&o.noUser, "no-user", "n", o.noUser, "prune user from the given URL")
+
+	r := &runner{
+		stdout:      stdout,
+		scheme:      converter.SchemeHTTP,
+		makeOptions: o.makeOptions,
+	}
+	cmd.RunE = r.run
 
 	return cmd
 }
