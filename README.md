@@ -1,16 +1,31 @@
 # giturl
-`giturl` lets you convert a Git URL into the scheme you like.
+
+[![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/nakabonne/giturl/pkg)
+
+`giturl` lets you convert [Git URLs](https://git-scm.com/docs/git-clone#_git_urls) into the scheme you like.
 
 ## Installation
+
+For Mac OS, Linux and Windows, you can download a binary release [here](https://github.com/nakabonne/giturl/releases).
+
+With Homebrew
+```
+brew install nakabonne/giturl/giturl
+```
 
 With Go
 ```
 go get github.com/nakabonne/giturl
 ```
 
+With Docker
+```
+docker run --rm nakabonne/giturl:latest giturl
+```
+
 ## Usage
 
-```bash
+```
 $ giturl -h
 A converter for Git URLs
 
