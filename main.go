@@ -43,8 +43,8 @@ func main() {
 		stderr: os.Stderr,
 	}
 	flagSet.StringVarP(&a.scheme, "scheme", "s", a.scheme, "convert to the given schema: ssh|http|https|git|file")
-	flagSet.StringVarP(&a.user, "user", "u", "", "set user")
-	flagSet.BoolVarP(&a.noUser, "no-user", "n", false, "prune user from the given URL")
+	flagSet.StringVar(&a.user, "user", "", "set user")
+	flagSet.BoolVar(&a.noUser, "no-user", false, "prune user from the given URL")
 	flagSet.BoolVarP(&a.scpLike, "scp-like", "S", false, "emit scp-like syntax (available only when --schema=ssh)")
 	flagSet.BoolVarP(&a.version, "version", "v", false, "print the current version")
 	flagSet.Usage = usage
@@ -73,10 +73,13 @@ func (a *app) run(args []string) int {
 	if a.scheme == "" {
 		a.scheme = "ssh"
 	}
+	user := a.user
+	if a.noUser {
+		user = ""
+	}
 	opts := converter.Options{
-		User:      a.user,
-		PruneUser: a.noUser,
-		ScpLike:   a.scpLike,
+		User:    &user,
+		ScpLike: a.scpLike,
 	}
 	res, err := converter.Convert(args[0], converter.Scheme(a.scheme), opts)
 	if err != nil {
