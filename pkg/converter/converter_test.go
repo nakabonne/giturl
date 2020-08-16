@@ -1,6 +1,10 @@
 package converter
 
-import "testing"
+import (
+	"testing"
+
+	"github.com/stretchr/testify/assert"
+)
 
 func TestConvert(t *testing.T) {
 	tests := []struct {
@@ -314,13 +318,8 @@ func TestConvert(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := Convert(tt.rawURL, tt.scheme, tt.opts)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("Convert() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if got != tt.want {
-				t.Errorf("Convert() got = %v, want %v", got, tt.want)
-			}
+			assert.Equal(t, tt.wantErr, err != nil)
+			assert.Equal(t, tt.want, got)
 		})
 	}
 }
