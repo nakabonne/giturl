@@ -12,12 +12,25 @@ go get github.com/nakabonne/giturl
 
 ```bash
 $ giturl -h
+A converter for Git URLs
+
+Usage:
+  giturl [command]
+
+Available Commands:
+  file        Convert into file syntax
+  git         Convert into git syntax
+  help        Help about any command
+  http        Convert into http syntax
+  https       Convert into https syntax
+  ssh         Convert into ssh syntax
+  version     Print the current version
 ```
 
 ## Examples
 
 ```bash
-$ giturl https git@github.com:org/repo.git
+$ giturl https --no-user git@github.com:org/repo.git
 https://github.com/org/repo.git
 
 $ giturl ssh https://github.com/org/repo.git
