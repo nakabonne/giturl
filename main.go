@@ -4,18 +4,10 @@ import (
 	"fmt"
 	"io"
 	"os"
-	"runtime"
 
 	"github.com/spf13/cobra"
 
 	"github.com/nakabonne/giturl/pkg/commands"
-)
-
-var (
-	// Automatically populated by goreleaser during build
-	version = "unversioned"
-	commit  = "?"
-	date    = "?"
 )
 
 type app struct {
@@ -33,14 +25,6 @@ func newApp(name, desc string) *app {
 		stdout: os.Stdout,
 		stderr: os.Stderr,
 	}
-	versionCmd := &cobra.Command{
-		Use:   "version",
-		Short: "print the current version",
-		Run: func(cmd *cobra.Command, args []string) {
-			fmt.Fprintf(a.stderr, "version=%s, commit=%s, buildDate=%s, os=%s, arch=%s\n", version, commit, date, runtime.GOOS, runtime.GOARCH)
-		},
-	}
-	a.rootCmd.AddCommand(versionCmd)
 	return a
 }
 
@@ -50,18 +34,19 @@ func (a *app) addCommands(cmds ...*cobra.Command) {
 	}
 }
 
+func (a *app) run() error {
+	return a.rootCmd.Execute()
+}
+
 func main() {
 	a := newApp("giturl", "A converter for Git URLs")
-
 	a.addCommands(
-		commands.NewSSHCommand(),
+		commands.NewVersionCommand(a.stdout),
+		commands.NewSSHCommand(a.stdout),
 	)
+
 	if err := a.run(); err != nil {
 		fmt.Fprintln(a.stderr, err)
 		os.Exit(1)
 	}
-}
-
-func (a *app) run() error {
-	return a.rootCmd.Execute()
 }

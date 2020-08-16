@@ -3,7 +3,6 @@ package commands
 import (
 	"fmt"
 	"io"
-	"os"
 
 	"github.com/spf13/cobra"
 
@@ -16,9 +15,9 @@ type ssh struct {
 	stdout  io.Writer
 }
 
-func NewSSHCommand() *cobra.Command {
+func NewSSHCommand(stdout io.Writer) *cobra.Command {
 	r := &ssh{
-		stdout: os.Stdout,
+		stdout: stdout,
 	}
 	cmd := &cobra.Command{
 		Use:   "ssh",
@@ -30,6 +29,7 @@ func NewSSHCommand() *cobra.Command {
 
 	return cmd
 }
+
 func (r *ssh) run(_ *cobra.Command, args []string) error {
 	if len(args) == 0 {
 		return fmt.Errorf("no URL given")

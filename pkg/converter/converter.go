@@ -20,6 +20,7 @@ const (
 
 // Options provides an ability to customize the output URLs in detail.
 type Options struct {
+	// TODO: Make value instead of pointer
 	// Override the user if non-empty string set.
 	// Prune user from the given URL if empty string set.
 	User *string
