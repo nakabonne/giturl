@@ -1,7 +1,6 @@
 package commands
 
 import (
-	"fmt"
 	"io"
 
 	"github.com/spf13/cobra"
@@ -9,41 +8,37 @@ import (
 	"github.com/nakabonne/giturl/pkg/converter"
 )
 
-type ssh struct {
+type sshOptions struct {
 	scpLike bool
 	user    string
-	stdout  io.Writer
 }
 
 func NewSSHCommand(stdout io.Writer) *cobra.Command {
-	r := &ssh{
-		stdout: stdout,
-	}
+	s := &sshOptions{}
 	cmd := &cobra.Command{
-		Use:   "ssh",
-		Short: "Convert into ssh syntax",
-		RunE:  r.run,
+		Use:     "ssh",
+		Short:   "Convert into sshOptions syntax",
+		Example: "giturl ssh --scp-like --user=git https://github.com/org/repo.git",
 	}
-	cmd.Flags().BoolVarP(&r.scpLike, "scp-like", "s", r.scpLike, "emit scp-like syntax")
-	cmd.Flags().StringVar(&r.user, "user", r.user, "override the user")
+	cmd.Flags().BoolVarP(&s.scpLike, "scp-like", "s", s.scpLike, "emit scp-like syntax")
+	cmd.Flags().StringVar(&s.user, "user", s.user, "override the user")
+
+	r := &runner{
+		stdout:      stdout,
+		scheme:      converter.SchemeSSH,
+		makeOptions: s.makeOptions,
+	}
+	cmd.RunE = r.run
 
 	return cmd
 }
 
-func (r *ssh) run(_ *cobra.Command, args []string) error {
-	if len(args) == 0 {
-		return fmt.Errorf("no URL given")
+func (s *sshOptions) makeOptions() *converter.Options {
+	opts := &converter.Options{
+		ScpLike: s.scpLike,
 	}
-	opts := converter.Options{
-		ScpLike: r.scpLike,
+	if s.user != "" {
+		opts.User = &s.user
 	}
-	if r.user != "" {
-		opts.User = &r.user
-	}
-	res, err := converter.Convert(args[0], converter.SchemeSSH, opts)
-	if err != nil {
-		return err
-	}
-	fmt.Fprintln(r.stdout, res)
-	return nil
+	return opts
 }

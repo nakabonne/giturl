@@ -29,13 +29,15 @@ type Options struct {
 }
 
 // Convert will attempt to convert to the given scheme.
-func Convert(rawURL string, scheme Scheme, opts Options) (string, error) {
+func Convert(rawURL string, scheme Scheme, opts *Options) (string, error) {
 	u := parser.Parse(rawURL)
-	if opts.User != nil {
-		if *opts.User == "" {
-			u.User = nil
-		} else {
-			u.User = url.User(*opts.User)
+	if opts != nil {
+		if opts.User != nil {
+			if *opts.User == "" {
+				u.User = nil
+			} else {
+				u.User = url.User(*opts.User)
+			}
 		}
 	}
 

@@ -43,6 +43,10 @@ func main() {
 	a.addCommands(
 		commands.NewVersionCommand(a.stdout),
 		commands.NewSSHCommand(a.stdout),
+		commands.NewHTTPSCommand(a.stdout),
+		commands.NewHTTPCommand(a.stdout),
+		commands.NewGitCommand(a.stdout),
+		commands.NewFileCommand(a.stdout),
 	)
 
 	if err := a.run(); err != nil {
