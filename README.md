@@ -20,7 +20,7 @@ go get github.com/nakabonne/giturl
 
 With Docker
 ```
-docker run --rm nakabonne/giturl:latest giturl
+docker run --rm nakabonne/giturl giturl
 ```
 
 ## Usage
