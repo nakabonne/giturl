@@ -1,5 +1,6 @@
 # giturl
 
+[![codecov](https://codecov.io/gh/nakabonne/giturl/branch/master/graph/badge.svg)](https://codecov.io/gh/nakabonne/giturl)
 [![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=flat-square)](https://godoc.org/github.com/nakabonne/giturl/pkg/converter)
 
 `giturl` lets you convert [Git URLs](https://git-scm.com/docs/git-clone#_git_urls) into the scheme you like.
@@ -57,6 +58,17 @@ Available Commands:
   ssh         Convert into ssh syntax
   version     Print the current version
 ```
+
+## Supported schemes
+SSH, Git, HTTP, and HTTPS protocols are available as Git URLs. The SSH protocol also supports an alternative SCP-like syntax:
+
+- `ssh://[user@]host.xz[:port]/path/to/repo.git/`
+- `[user@]host.xz:path/to/repo.git/`
+- `git://host.xz[:port]/path/to/repo.git/`
+- `http[s]://host.xz[:port]/path/to/repo.git/`
+- `file:///path/to/repo.git/` (for local repositories)
+
+See more: https://git-scm.com/docs/git-clone#_git_urls
 
 ## License
 [MIT][license] © [Ryo Nakao][website]
