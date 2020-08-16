@@ -58,3 +58,8 @@ Available Commands:
   version     Print the current version
 ```
 
+## License
+[MIT][license] © [Ryo Nakao][website]
+
+[license]: /LICENSE
+[website]: https://nakabonne.dev

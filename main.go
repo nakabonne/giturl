@@ -16,14 +16,14 @@ type app struct {
 	stderr  io.Writer
 }
 
-func newApp(name, desc string) *app {
+func newApp(name, desc string, stdout, stderr io.Writer) *app {
 	a := &app{
 		rootCmd: &cobra.Command{
 			Use:   name,
 			Short: desc,
 		},
-		stdout: os.Stdout,
-		stderr: os.Stderr,
+		stdout: stdout,
+		stderr: stderr,
 	}
 	return a
 }
@@ -39,7 +39,7 @@ func (a *app) run() error {
 }
 
 func main() {
-	a := newApp("giturl", "Converts Git URLs into the scheme you like.")
+	a := newApp("giturl", "Converts Git URLs into the scheme you like.", os.Stdout, os.Stderr)
 	a.addCommands(
 		commands.NewVersionCommand(a.stdout),
 		commands.NewSSHCommand(a.stdout),
