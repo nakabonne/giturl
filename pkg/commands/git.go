@@ -9,7 +9,7 @@ import (
 )
 
 func NewGitCommand(stdout io.Writer) *cobra.Command {
-	o := &notSSHOptions{}
+	o := &httpsOptions{}
 	cmd := &cobra.Command{
 		Use:     "git",
 		Short:   "Convert into git syntax",

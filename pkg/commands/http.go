@@ -9,7 +9,7 @@ import (
 )
 
 func NewHTTPCommand(stdout io.Writer) *cobra.Command {
-	o := &notSSHOptions{}
+	o := &httpsOptions{}
 	cmd := &cobra.Command{
 		Use:     "http",
 		Short:   "Convert into http syntax",

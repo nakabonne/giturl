@@ -8,8 +8,21 @@ import (
 	"github.com/nakabonne/giturl/pkg/converter"
 )
 
+type httpsOptions struct {
+	noUser bool
+}
+
+func (o *httpsOptions) makeOptions() *converter.Options {
+	opts := &converter.Options{}
+	if o.noUser {
+		user := ""
+		opts.User = &user
+	}
+	return opts
+}
+
 func NewHTTPSCommand(stdout io.Writer) *cobra.Command {
-	o := &notSSHOptions{}
+	o := &httpsOptions{}
 	cmd := &cobra.Command{
 		Use:     "https",
 		Short:   "Convert into https syntax",
